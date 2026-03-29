@@ -65,23 +65,37 @@ GLuint createShaderProgram(){
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
-    if (key< 0 || key>=1024){
-        return;
-    }
-    if (action==GLFW_PRESS){
-        keyboard[key]= true;
-    }
-    else if (action==GLFW_RELEASE){
-        keyboard[key]= false;
+    if (key < 0 || key >= 1024) return;
+    if (action == GLFW_PRESS) keyboard[key] = true;
+    else if (action == GLFW_RELEASE) keyboard[key] = false;
+
+    // 1. Alapfeladat
+    if (key == GLFW_KEY_H && action == GLFW_PRESS && !isMoving){
+        circleX=300.0f; //Középre helyezzük indításkor
+        circleY=300.0f;
+        velX=3.5f;      // Csak X irányú sebesség
+        velY=0.0f;      // Nincs függőleges mozgás
+        isMoving=true;
     }
 
-    //ahhoz, hogy el kezdjen pattogni meg kell nyomni az s gombot
-    if (key==GLFW_KEY_S && action==GLFW_PRESS&& !isMoving){
-        float angle= toRadians(25.0f); 
-        float speed= 3.5f;
-        velX=cos(angle)*speed;
-        velY=sin(angle)*speed;
-        isMoving =true;
+    // 2. Kiegészítő feladat
+    if (key == GLFW_KEY_S && action == GLFW_PRESS && !isMoving){
+        circleX=300.0f;
+        circleY=300.0f;
+        float angle=toRadians(25.0f);
+        float speed=3.5f;
+        velX=cos(angle)* speed;
+        velY=sin(angle)* speed;
+        isMoving= true;
+    }
+
+    // Megállítás és alaphelyzet az R gombbal
+    if (key == GLFW_KEY_R && action == GLFW_PRESS){
+        circleX=300.0f;
+        circleY=300.0f;
+        velX=0.0f;
+        velY=0.0f;
+        isMoving=false;
     }
 }
 
@@ -98,8 +112,13 @@ void display(GLFWwindow* window, double currentTime){
     if (isMoving){
         circleX+= velX;
         circleY+= velY;
-        if (circleX+50> 600 || circleX-50< 0) velX*=-1.0f; //ha a kör eléri a kép szélét, akkor megfordítjuk a sebesség előjelét
-        if (circleY+50> 600 || circleY-50< 0) velY*=-1.0f;
+        if (circleX + 50 > 600 || circleX - 50 < 0) {
+            
+            velX *= -1.0f; //ha a kör eléri a kép szélét, akkor megfordítjuk a sebesség előjelét
+        }
+        if (circleY + 50 > 600 || circleY - 50 < 0) {
+            velY *= -1.0f;
+        }
     }
 
     float currentLineY=300.0f+lineYOffset;
